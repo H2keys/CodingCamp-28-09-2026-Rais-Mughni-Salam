@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Expense & Budget Visualizer - a simple mobile-friendly expense tracker.">
+  <title>Expense & Budget Visualizer</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">PERSONAL FINANCE</p>
+        <h1>Expense &amp; Budget Visualizer</h1>
+        <p class="subtitle">Track your daily spending in one simple place.</p>
+      </div>
+      <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+    </header>
+
+    <main>
+      <section class="hero-card" aria-label="Total balance">
+        <div>
+          <p class="card-label">Total Balance</p>
+          <h2 id="totalBalance">Rp0</h2>
+          <p id="transactionCount" class="muted">0 transactions</p>
+        </div>
+        <div class="balance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H20v14H5.5A2.5 2.5 0 0 1 3 16.5z"/><path d="M3 8h14a3 3 0 0 1 3 3v2h-5a2 2 0 0 1 0-4h5"/><path d="M15 11h.01"/></svg></div>
+      </section>
+
+      <div class="grid-layout">
+        <section class="panel form-panel" aria-labelledby="addExpenseTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">NEW TRANSACTION</p>
+              <h2 id="addExpenseTitle">Add Expense</h2>
+            </div>
+          </div>
+
+          <form id="expenseForm" novalidate>
+            <div class="field-group">
+              <label for="itemName">Item Name</label>
+              <input id="itemName" name="itemName" type="text" placeholder="e.g. Lunch" maxlength="60" autocomplete="off" required>
+              <small class="field-error" id="itemNameError"></small>
+            </div>
+
+            <div class="field-group">
+              <label for="amount">Amount</label>
+              <div class="input-prefix">
+                <span>Rp</span>
+                <input id="amount" name="amount" type="number" placeholder="25000" min="1" step="1" inputmode="numeric" required>
+              </div>
+              <small class="field-error" id="amountError"></small>
+            </div>
+
+            <div class="field-group">
+              <div class="label-row">
+                <label for="category">Category</label>
+                <button id="showCategoryManager" class="text-button" type="button">Manage</button>
+              </div>
+              <select id="category" name="category" required></select>
+              <small class="field-error" id="categoryError"></small>
+            </div>
+
+            <button class="primary-button" type="submit"><span aria-hidden="true" class="button-icon" data-icon="plus"></span>Add Transaction</button>
+          </form>
+        </section>
+
+        <section class="panel chart-panel" aria-labelledby="chartTitle">
+          <div class="section-heading row-heading">
+            <div>
+              <p class="eyebrow">SPENDING OVERVIEW</p>
+              <h2 id="chartTitle">By Category</h2>
+            </div>
+            <span id="chartTotalBadge" class="badge">Rp0</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="expenseChart" aria-label="Pie chart showing spending by category"></canvas>
+            <div id="emptyChartState" class="empty-chart-state">
+              <span class="empty-chart-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"/><path d="M8 15v-4M13 15V7M18 15V9"/></svg></span>
+              <strong>No spending yet</strong>
+              <p>Add a transaction to see your chart.</p>
+            </div>
+          </div>
+          <div id="chartLegend" class="chart-legend" aria-label="Chart legend"></div>
+        </section>
+      </div>
+
+      <section class="panel transactions-panel" aria-labelledby="transactionsTitle">
+        <div class="section-heading row-heading wrap-heading">
+          <div>
+            <p class="eyebrow">HISTORY</p>
+            <h2 id="transactionsTitle">Transactions</h2>
+          </div>
+          <div class="toolbar">
+            <label class="sr-only" for="sortSelect">Sort transactions</label>
+            <select id="sortSelect">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="amount-high">Amount: high to low</option>
+              <option value="amount-low">Amount: low to high</option>
+              <option value="category">Category: A-Z</option>
+            </select>
+            <button id="clearAllButton" class="danger-button" type="button">Clear All</button>
+          </div>
+        </div>
+
+        <div id="transactionList" class="transaction-list" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+          <h3>No transactions yet</h3>
+          <p>Add your first expense using the form above.</p>
+        </div>
+      </section>
+
+      <section id="categoryManager" class="panel category-panel hidden" aria-labelledby="categoryManagerTitle">
+        <div class="section-heading row-heading">
+          <div>
+              <p class="eyebrow">CATEGORY SETTINGS</p>
+            <h2 id="categoryManagerTitle">Custom Categories</h2>
+          </div>
+          <button id="closeCategoryManager" class="icon-button small" type="button" aria-label="Close category manager"><span aria-hidden="true" data-icon="close"></span></button>
+        </div>
+
+        <form id="categoryForm" class="category-form">
+          <label class="sr-only" for="customCategory">New category name</label>
+          <input id="customCategory" type="text" maxlength="24" placeholder="e.g. Shopping" autocomplete="off">
+          <button class="secondary-button" type="submit">Add Category</button>
+        </form>
+        <p id="categoryManagerMessage" class="helper-text"></p>
+        <div id="categoryList" class="category-list"></div>
+      </section>
+    </main>
+
+    <footer class="footer">Expense &amp; Budget Visualizer · Data stays in your browser.</footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
